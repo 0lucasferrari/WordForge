@@ -10,13 +10,16 @@ export function useWords() {
   const loadFromStorage = useCallback(() => {
     const cached = getFromStorage();
     setWords(cached);
+    if (cached.length > 0) setLoading(false);
   }, []);
 
   const syncWithApi = useCallback(async () => {
     try {
       const data = await api.fetchWords();
-      setWords(data);
-      saveToStorage(data);
+      if (data.length > 0) {
+        setWords(data);
+        saveToStorage(data);
+      }
     } catch (err) {
       setError(err.message);
       loadFromStorage();
